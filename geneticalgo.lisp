@@ -1,61 +1,14 @@
-;;; Project 3
-;;;
 ;;; A SIMPLE GENETIC ALGORITHM OPERATING OVER FLOATING-POINT VECTORS
-;;;
-;;; DUE: MIDNIGHT THE EVENING OF FRIDAY, NOVEMBER 7
-;;;
-;;; That's about 2.5 weeks from now.  You have to implement a number
-;;; of functions, but none of them is particularly hard.  If you get
-;;; really stuck, I am willing to give you help on a function or two
-;;; in return for a reduced grade.
-
-
-;;; Please don't deviate from this file.  Rearranging
-;;; things into multiple files etc. may be convenient for you but it's MUCH
-;;; tougher to grade.
 
 
 #|
-In this project you will do three things:
-
 1. Implement a very simple abstract high-level evolutionary computation framework
 
-2. Implement the functions necessary for a floating-point genetic algorithm
+2. Implement a floating-point genetic algorithm
 
 3. Test it on various objective functions and find good settings of parameters
 which work well on those functions
 
-
-WHAT YOU MUST PROVIDE:
-
-1. Completed code file which works and compiles and is reasonably well documented.
-
-2. IN COMMENTS at the end of the code file, a short report which discusses interesting
-things you discovered as you were implementing the code, and the results of
-an experiment where you attempted to find parameter settings which generally
-produced the best results for various test objective functions.  Keep in mind
-that this algorithm is STOCHASTIC, so sometimes it produces good results and
-sometimes it produces bad ones, based partly on randomness.  So don't rely on
-a single run to determine how good some parameter settings are; perhaps you
-might run some N > 50 times and take the average to get an idea of how well they
-do compared to others.
-
-I have given you a bunch of objective test problems to try.  They are roughly in
-increasing order of "challenge" to the genetic algorithm.  Some parameters you
-can fool around with: the tournament size, the mutation rate, the crossover rate,
-and the mutation variance.
-
-I would fix the size of the individual, the number of individuals in the population,
-and the number of generations to constants -- they're not part of the experiment
-though you have to say what you set them to.  Suggested settings: an individual
-of size 20, 50 individuals in the population, and oh, I dunno, how about 1000
-generations.  You'll find that as the individual size gets bigger the problem
-gets harder for the GA to solve.  Also as the generations get longer or the
-population size gets bigger, the GA is being given more total resources to throw
-at your problem so you'd expect better results.
-
-SUBMISSION
-Mail the TA your file, including the report.
 
 |#
 
@@ -63,7 +16,7 @@ Mail the TA your file, including the report.
 
 
 
-;;; Some utility Functions and Macros that you might find to be useful (hint)
+;;; Some utility Functions and Macros that might find to be useful
 
 (defmacro while (test &rest body)
   "Repeatedly executes body as long as test returns true.  Then returns nil."
@@ -121,15 +74,6 @@ given mean and variance (using the Box-Muller-Marsaglia method)"
 (defun tournament-select-one (population fitnesses)
   "Does one tournament selection and returns the selected individual."
 
-  ;;; IMPLEMENT ME
-  ;;;
-  ;;; See Algorithm 32 of Essentials of Metaheuristics
-
-  ;;; Hints:
-  ;;; 1. My implementation is about 7 lines long
-  ;;; 2. This would be a reasonable place to judiciously use SETF
-  ;;; 3. You might want to do a loop, and keep track of both the
-  ;;;    best individual you've found so far and also its fitness
 
   (let ((best-index (random (length population))))
     (dotimes (i (- *tournament-size* 1))
@@ -143,12 +87,6 @@ given mean and variance (using the Box-Muller-Marsaglia method)"
 (defun tournament-selector (num population fitnesses)
   "Does NUM tournament selections, and puts them all in a list, then returns the list"
 
-  ;;; IMPLEMENT ME
-  ;;;
-  ;;; Hints:
-  ;;; 1. This is a very short function.  My version is 1 line long.
-  ;;; 2. Maybe one of the utility functions I provided might be of
-  ;;;    benefit here
 
   (generate-list num (lambda () (tournament-select-one population fitnesses))))
 
@@ -175,8 +113,7 @@ prints that fitness and individual in a pleasing manner."
   "Evolves for some number of GENERATIONS, creating a population of size
 POP-SIZE, using various functions"
 
-  ;;; IMPLEMENT ME
-  ;;;
+  
   ;; The functions passed in are as follows:
   ;;(SETUP)                     called at the beginning of evolution, to set up
   ;;                            global variables as necessary
@@ -200,14 +137,7 @@ POP-SIZE, using various functions"
   ;; best individual discovered over the whole run at the end, plus its fitness
   ;; and any other statistics you think might be nifty.
 
-  ;;; HINTS:
-  ;;; 1. You could do this in many ways.  But I implemented it using
-  ;;;    the following functions (among others)
-  ;;;    FUNCALL FORMAT MAPCAR LAMBDA APPLY
-  ;;; 2. My version of this function is about 20 lines long.
-  ;;;    This sounds long but it's really pretty straightforward
-  ;;;    code with no particular tricks.
-  ;;; 3. Pay attention to the keyword arguments
+  
   (funcall setup)
   (let* ((population (generate-list pop-size creator))
          (best-individual nil))
@@ -240,17 +170,6 @@ POP-SIZE, using various functions"
 ;;;;;; FLOATING-POINT VECTOR GENETIC ALGORTITHM
 
 
-;;; Here you will implement creator, modifier, and setup functions for
-;;; individuals in the form of lists of floating-point values.
-;;; I have provided some objective functions which you can use as
-;;; fitness evaluation functions.
-
-;;; If you were really into this, you might try implementing an evolution
-;;; strategy instead of a genetic algorithm and compare the two.
-;;;
-;;; If you were really REALLY into this, I have an extension of this
-;;; project which also does genetic programming as well.  That is a much
-;;; MUCH MUCH MUCH more difficult project.
 
 
 
@@ -265,14 +184,12 @@ POP-SIZE, using various functions"
   "Creates a floating-point-vector *float-vector-length* in size, filled with
 UNIFORM random numbers in the range appropriate to the given problem"
 
-  ;;; IMPLEMENT ME
+  
   ;;;
   ;;; The numbers must be uniformly randomly chosen between *float-min* and
   ;;; *float-max*.  See the documentation for the RANDOM function.
 
-  ;;; HINTS:
-  ;;; 1. My version is 3 lines long.
-  ;;; 2. Maybe a function I provided in the utilities might be handy.
+  
 
   (generate-list *float-vector-length* (lambda ()
                                          (+ *float-min* (* (random 1.0)
@@ -300,14 +217,11 @@ UNIFORM random numbers in the range appropriate to the given problem"
 *crossover-probability* is the probability that any given allele will crossover. 
 The individuals are guaranteed to be the same length.  Returns NIL."
 
-  ;;; IMPLEMENT ME
-  ;;;
+  
   ;;; For crossover: use uniform crossover (Algorithm 25) in
   ;;;                Essentials of Metaheuristics
 
-  ;;; HINTS:
-  ;;; 1. DOTIMES, ELT, and ROTATEF
-  ;;; 2. My version of this function is 2 lines long.
+  
   (dotimes (i (length ind1))
     (if (random? *crossover-probability*) (rotatef (elt ind1 i) (elt ind2 i))))
   nil)
@@ -317,17 +231,6 @@ The individuals are guaranteed to be the same length.  Returns NIL."
   "Performs gaussian convolution mutation on the individual, modifying it in place.
  Returns NIL."
 
-  ;;; IMPLEMENT ME
-  ;;;
-  ;;; For mutation, see gaussian convolution (Algorithm 11) in
-  ;;;                Essentials of Metaheuristics
-  ;;; Keep in mind the legal minimum and maximum values for numbers.
-
-  ;;; HINTS:
-  ;;; 1. My version of this function is 6 lines long.
-  ;;; 2. Maybe a function or three in the utility functions above
-  ;;;    might be handy
-  ;;; 3. See also SETF
 
 
   (dotimes (i (length ind))
@@ -352,17 +255,13 @@ then mutates the children.  *crossover-probability* is the probability that any
 given allele will crossover.  *mutation-probability* is the probability that any
 given allele in a child will mutate.  Mutation does gaussian convolution on the allele."
 
-    ;;; IMPLEMENT ME
-    ;;; It's pretty straightforward.
+    
+    
     ;;; This function should first COPY the two individuals, then
     ;;; CROSS THEM OVER, then mutate the result using gaussian covolution,
     ;;; then return BOTH children together as a list (child1 child2)
     ;;;
-    ;;; HINTS:
-    ;;; 1. My version of this function is 6 lines long but it's
-    ;;;    really, really simple.
-    ;;; 2. For copying lists:  See the Lisp Cheat Sheet
-    ;;;    (http://cs.gmu.edu/~sean/lisp/LispCheatSheet.txt)
+    
 
   (let* ((child1 (copy-tree ind1))
          (child2 (copy-tree ind2)))
